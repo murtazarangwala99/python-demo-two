@@ -1,2 +1,0 @@
-[console_scripts]
-flask-todo = flask_todo_app.app:main
