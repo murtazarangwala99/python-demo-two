@@ -45,6 +45,13 @@ That's it! This command:
 
 ### Step 3: Run the Application
 
+```
+python -m venv .venv
+source .venv/Scripts/activate   # Git Bash on Windows
+pip install -e .
+
+```
+
 **Option A: Using the installed command**
 ```bash
 flask-todo

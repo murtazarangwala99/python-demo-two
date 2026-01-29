@@ -8,32 +8,55 @@ version = "1.0.0"
 description = "A simple and elegant TODO application built with Flask"
 readme = "README.md"
 requires-python = ">=3.7"
+
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    { name = "Murtuza Rangwala" }
 ]
+
 dependencies = [
     "Flask>=3.0.0",
-    "tomli>=2.0.1; python_version < '3.11'",
+    "tomli>=2.0.1; python_version < '3.11'"
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
-    "black>=23.0.0",
+    "black>=23.0.0"
 ]
 
 [project.scripts]
 flask-todo = "flask_todo_app.app:main"
 
+
+# ==============================
+# Application Runtime Config
+# ==============================
+[tool.flask_todo_app.app]
+name = "Flask TODO Application"
+debug = true
+host = "0.0.0.0"
+port = 5000
+
+[tool.flask_todo_app.database]
+filename = "todos.db"
+
+[tool.flask_todo_app.settings]
+max_todo_length = 200
+items_per_page = 10
+
+
+# ==============================
+# Tooling
+# ==============================
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-flask_todo_app = ["templates/*.html", "*.toml"]
+flask_todo_app = ["templates/*.html"]
 
 [tool.black]
 line-length = 88
-target-version = ['py37']
+target-version = ["py37"]
