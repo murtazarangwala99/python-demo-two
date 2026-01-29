@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config.app.name }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .flash-messages {
+            padding: 0;
+        }
+
+        .flash {
+            padding: 15px 30px;
+            margin: 0;
+            text-align: center;
+            font-weight: 500;
+            border-left: 4px solid;
+        }
+
+        .flash.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #28a745;
+        }
+
+        .flash.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #dc3545;
+        }
+
+        .flash.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border-color: #17a2b8;
+        }
+
+        .add-todo {
+            padding: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .add-todo form {
+            display: flex;
+            gap: 12px;
+        }
+
+        .add-todo input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .add-todo input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .add-todo button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .add-todo button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .add-todo button:active {
+            transform: translateY(0);
+        }
+
+        .todo-list {
+            padding: 20px 30px 30px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .todo-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .todo-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .todo-list::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .todo-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+            border-color: #667eea;
+        }
+
+        .todo-item.completed {
+            opacity: 0.7;
+            background: #e8f4f8;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+            color: #212529;
+            margin: 0 15px;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-toggle {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-toggle:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+
+        .checkbox {
+            width: 28px;
+            height: 28px;
+            border: 3px solid #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            flex-shrink: 0;
+            background: white;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .checkbox:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .checkbox.checked {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #6c757d;
+        }
+
+        .clear-completed {
+            padding: 20px 30px;
+            border-top: 2px solid #f0f0f0;
+            text-align: center;
+        }
+
+        .btn-clear {
+            padding: 12px 24px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-clear:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .footer {
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9em;
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .todo-actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 {{ config.app.name }}</h1>
+            <p>Stay organized, stay productive</p>
+        </div>
+
+        {% if todos %}
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">{{ todos|length }}</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ todos|selectattr('completed')|list|length }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ todos|rejectattr('completed')|list|length }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="add-todo">
+            <form action="{{ url_for('add_todo') }}" method="POST">
+                <input 
+                    type="text" 
+                    name="task" 
+                    placeholder="What needs to be done?" 
+                    maxlength="{{ config.settings.max_todo_length }}"
+                    required
+                    autofocus
+                >
+                <button type="submit">➕ Add Task</button>
+            </form>
+        </div>
+
+        <div class="todo-list">
+            {% if todos %}
+                {% for todo in todos %}
+                    <div class="todo-item {% if todo.completed %}completed{% endif %}">
+                        <a href="{{ url_for('toggle_todo', todo_id=todo.id) }}" style="text-decoration: none;">
+                            <div class="checkbox {% if todo.completed %}checked{% endif %}"></div>
+                        </a>
+                        <div class="todo-text">{{ todo.task }}</div>
+                        <div class="todo-actions">
+                            <a href="{{ url_for('toggle_todo', todo_id=todo.id) }}" class="btn btn-toggle">
+                                {% if todo.completed %}↩️ Undo{% else %}✓ Done{% endif %}
+                            </a>
+                            <a href="{{ url_for('delete_todo', todo_id=todo.id) }}" 
+                               class="btn btn-delete"
+                               onclick="return confirm('Are you sure you want to delete this task?')">
+                                🗑️ Delete
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <h3>No tasks yet!</h3>
+                    <p>Add your first task to get started</p>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if todos|selectattr('completed')|list|length > 0 %}
+        <div class="clear-completed">
+            <a href="{{ url_for('clear_completed') }}" 
+               class="btn-clear"
+               onclick="return confirm('Clear all completed tasks?')">
+                🧹 Clear Completed Tasks
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            Configured via TOML • Max task length: {{ config.settings.max_todo_length }} chars
+        </div>
+    </div>
+</body>
+</html>

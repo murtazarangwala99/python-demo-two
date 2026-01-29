@@ -1,0 +1,12 @@
+[app]
+name = "Flask TODO Application"
+debug = true
+host = "0.0.0.0"
+port = 5000
+
+[database]
+filename = "todos.db"
+
+[settings]
+max_todo_length = 200
+items_per_page = 10
